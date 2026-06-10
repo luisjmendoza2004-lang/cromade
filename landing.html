@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CROMADE — Más allá del último día</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="landing.css">
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <nav class="nav-landing" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <span class="nav-logo-icon">◉</span>
+                <span class="nav-logo-text">CROMADE</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="#experiencia" class="nav-link">Experiencia</a>
+                <a href="#capitulos" class="nav-link">Capítulos</a>
+                <a href="#testimonios" class="nav-link">Testimonios</a>
+                <a href="#precios" class="nav-link">Precios</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+            </div>
+            <div class="nav-actions">
+                <button class="btn-nav-login" onclick="landingApp.showLoginModal()">Iniciar Sesión</button>
+                <button class="btn-nav-cta" onclick="landingApp.goToApp()">Comenzar Viaje</button>
+            </div>
+            <button class="nav-mobile-toggle" onclick="landingApp.toggleMobileMenu()">☰</button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero-landing">
+        <div class="hero-bg">
+            <div class="hero-bg-overlay"></div>
+            <div class="hero-particles" id="heroParticles"></div>
+        </div>
+        <div class="hero-content">
+            <div class="hero-badge-container">
+                <span class="hero-badge">🎬 Experiencia Inmersiva Interactiva</span>
+                <span class="hero-badge-secondary">Novedad 2026</span>
+            </div>
+            <h1 class="hero-title">
+                <span class="hero-title-line">Más allá</span>
+                <span class="hero-title-line gradient-text">del último día</span>
+            </h1>
+            <p class="hero-subtitle">
+                Una novela de ciencia ficción filosófica que no solo se lee.<br>
+                Se <strong>vive</strong>. Se <strong>escucha</strong>. Se <strong>juega</strong>. Se <strong>transforma</strong>.
+            </p>
+            <div class="hero-stats-row">
+                <div class="hero-stat-item"><span class="hero-stat-num" data-count="10">0</span><span class="hero-stat-label">Capítulos</span></div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat-item"><span class="hero-stat-num" data-count="3">0</span><span class="hero-stat-label">Modos</span></div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat-item"><span class="hero-stat-num" data-count="50">0</span><span class="hero-stat-label">Quizzes</span></div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat-item"><span class="hero-stat-num" data-count="4">0</span><span class="hero-stat-label">Visuales</span></div>
+            </div>
+            <div class="hero-cta-group">
+                <button class="btn-hero-primary" onclick="landingApp.openTrailerModal()">
+                    <span class="btn-icon">▶</span><span>Ver Trailer</span><small>Gratis · 90 segundos</small>
+                </button>
+                <button class="btn-hero-secondary" onclick="landingApp.goToFreeChapter()">
+                    <span>📖 Leer Capítulo 1</span><small>Gratis · Sin registro</small>
+                </button>
+            </div>
+        </div>
+        <div class="hero-scroll-indicator">
+            <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
+            <span>Descubre más</span>
+        </div>
+    </section>
+
+    <!-- SINOPSIS -->
+    <section class="section-landing" id="sinopsis">
+        <div class="section-container-landing">
+            <div class="sinopsis-layout">
+                <div class="sinopsis-visual">
+                    <div class="sinopsis-image-container">
+                        <div class="sinopsis-image-placeholder">
+                            <span class="sinopsis-image-icon">🎭</span>
+                            <span class="sinopsis-image-text">Juliana Voss<br>se quita la máscara</span>
+                        </div>
+                        <div class="sinopsis-image-glow"></div>
+                    </div>
+                </div>
+                <div class="sinopsis-content-landing">
+                    <span class="section-tag-landing">La Historia</span>
+                    <h2 class="section-title-landing">El silencio deja de ser opción</h2>
+                    <div class="sinopsis-body">
+                        <p class="sinopsis-lead">
+                            En un mundo donde la Humanidad alcanzó la singularidad solo para descubrir que la verdadera evolución comienza cuando el silencio cesa de ser una opción, <strong>Juliana Voss</strong> se quita su máscara de iris y escucha algo que no proviene de ningún dispositivo: el <strong>Vínculo Primordial</strong>.
+                        </p>
+                        <blockquote class="sinopsis-quote">
+                            <span class="quote-mark">"</span>
+                            No nos controlan con miedo, nos controlan con comodidad. La jaula más perfecta es aquella que el prisionero confunde con su hogar.
+                            <cite>— Dr. Elias Varela</cite>
+                        </blockquote>
+                        <p class="sinopsis-continuation">
+                            Desde las máscaras de iris que reemplazaron los smartphones hasta el despertar colectivo de una humanidad que aprende a escuchar sin intermediarios, CROMADE teje una distopía donde la revolución no es violenta: es <em>consciente</em>.
+                        </p>
+                    </div>
+                    <div class="sinopsis-meta-landing">
+                        <span class="meta-tag-landing">Ciencia Ficción</span>
+                        <span class="meta-tag-landing">Filosofía</span>
+                        <span class="meta-tag-landing">Distopía</span>
+                        <span class="meta-tag-landing">Evolución</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERIENCIA -->
+    <section class="section-landing section-dark" id="experiencia">
+        <div class="section-container-landing">
+            <div class="section-header-landing">
+                <span class="section-tag-landing center">¿Cómo funciona?</span>
+                <h2 class="section-title-landing center">No es un libro. Es un <span class="gradient-text">universo</span>.</h2>
+                <p class="section-subtitle-landing">Tres modos de experiencia. Una sola historia que se adapta a cómo quieras vivirla.</p>
+            </div>
+            <div class="features-layout">
+                <div class="feature-card-large">
+                    <div class="feature-visual">
+                        <div class="feature-visual-icon">📖</div>
+                        <div class="feature-visual-glow"></div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Modo Lectura Inmersiva</h3>
+                        <p>Tipografía editorial diseñada para lectura profunda. Capítulos 1-2 completamente gratis.</p>
+                        <ul class="feature-list">
+                            <li><span class="feature-check">✓</span> 10 capítulos de prosa filosófica</li>
+                            <li><span class="feature-check">✓</span> Progreso de lectura guardado en la nube</li>
+                            <li><span class="feature-check">✓</span> Tamaño de fuente ajustable</li>
+                            <li><span class="feature-check">✓</span> Modo nocturno automático</li>
+                        </ul>
+                        <div class="feature-cta">
+                            <button class="btn-feature" onclick="landingApp.goToFreeChapter()">Probar gratis</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-card-large featured">
+                    <div class="feature-badge-popular">MÁS POPULAR</div>
+                    <div class="feature-visual">
+                        <div class="feature-visual-icon">🔊</div>
+                        <div class="feature-visual-glow"></div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Audiolibro TTS Inteligente</h3>
+                        <p>Voz sintética de alta calidad con velocidad ajustable. Escucha la historia mientras viajas, ejercitas o descansas.</p>
+                        <ul class="feature-list">
+                            <li><span class="feature-check">✓</span> Velocidad 0.8x, 1x, 1.2x, 1.5x, 2x</li>
+                            <li><span class="feature-check">✓</span> Visualizador de ondas animado</li>
+                            <li><span class="feature-check">✓</span> Funciona offline una vez descargado</li>
+                            <li><span class="feature-check">✓</span> Sincronización lectura-audio</li>
+                        </ul>
+                        <div class="feature-cta">
+                            <button class="btn-feature btn-feature-primary" onclick="landingApp.startSubscription('monthly')">Desbloquear audio</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-card-large">
+                    <div class="feature-visual">
+                        <div class="feature-visual-icon">🎬</div>
+                        <div class="feature-visual-glow"></div>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Capítulos Visuales</h3>
+                        <p>Storyboard interactivo tipo serie. 4 capítulos transformados en experiencia audiovisual con diálogos, escenas y decisiones.</p>
+                        <ul class="feature-list">
+                            <li><span class="feature-check">✓</span> 4 capítulos con escenas cinematográficas</li>
+                            <li><span class="feature-check">✓</span> Diálogos interactivos que alteran la narrativa</li>
+                            <li><span class="feature-check">✓</span> Transiciones cinematográficas</li>
+                            <li><span class="feature-check">✓</span> Banda sonora original</li>
+                        </ul>
+                        <div class="feature-cta">
+                            <button class="btn-feature" onclick="landingApp.startSubscription('monthly')">Ver visuales</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+        <!-- CAPITULOS -->
+    <section class="section-landing" id="capitulos">
+        <div class="section-container-landing">
+            <div class="section-header-landing">
+                <span class="section-tag-landing center">Estructura</span>
+                <h2 class="section-title-landing center">10 Capítulos · 3 Actos · 1 <span class="gradient-text">Destino</span></h2>
+                <p class="section-subtitle-landing">Capítulo 1 gratis. Capítulo 2 gratis tras registro. El resto, desbloquea tu viaje.</p>
+            </div>
+            <div class="acts-container">
+                <div class="act-block">
+                    <div class="act-header">
+                        <div class="act-badge">ACTO I</div>
+                        <h3 class="act-title-landing">El Despertar</h3>
+                        <p class="act-desc-landing">Caps 1-4 · La caída de las máscaras</p>
+                    </div>
+                    <div class="timeline-chapters-landing">
+                        <div class="timeline-chapter-landing chapter-free" onclick="landingApp.goToChapter(1)">
+                            <div class="tc-content">
+                                <span class="tc-num">I</span>
+                                <h4 class="tc-title">El Despertar del Vínculo</h4>
+                                <p class="tc-desc">Juliana se quita la máscara. El silencio habla.</p>
+                                <div class="tc-badges"><span class="tc-badge-free">GRATIS</span><span class="tc-badge-time">25 min</span></div>
+                            </div>
+                        </div>
+                        <div class="timeline-chapter-landing chapter-free-reg" onclick="landingApp.goToChapter(2)">
+                            <div class="tc-content">
+                                <span class="tc-num">II</span>
+                                <h4 class="tc-title">Los Arquitectos del Silencio</h4>
+                                <p class="tc-desc">La verdad detrás del control. La biblioteca resiste.</p>
+                                <div class="tc-badges"><span class="tc-badge-free-reg">GRATIS tras registro</span><span class="tc-badge-time">30 min</span></div>
+                            </div>
+                        </div>
+                        <div class="timeline-chapter-landing chapter-locked" onclick="landingApp.showLockMessage(3)">
+                            <div class="tc-content">
+                                <span class="tc-num">III</span>
+                                <h4 class="tc-title">El Retorno del Vínculo Primordial</h4>
+                                <p class="tc-desc">El spin-off. Una historia paralela de poderes despertados.</p>
+                                <div class="tc-badges"><span class="tc-badge-locked">🔒 PREMIUM</span><span class="tc-badge-time">35 min</span></div>
+                            </div>
+                            <div class="tc-lock-overlay"><span class="tc-lock-icon">🔒</span></div>
+                        </div>
+                        <div class="timeline-chapter-landing chapter-locked" onclick="landingApp.showLockMessage(4)">
+                            <div class="tc-content">
+                                <span class="tc-num">IV</span>
+                                <h4 class="tc-title">Máscaras de Iris</h4>
+                                <p class="tc-desc">Los primeros intentos de control. La comodidad como jaula.</p>
+                                <div class="tc-badges"><span class="tc-badge-locked">🔒 PREMIUM</span><span class="tc-badge-time">28 min</span></div>
+                            </div>
+                            <div class="tc-lock-overlay"><span class="tc-lock-icon">🔒</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="act-block">
+                    <div class="act-header">
+                        <div class="act-badge">ACTO II</div>
+                        <h3 class="act-title-landing">La Resistencia</h3>
+                        <p class="act-desc-landing">Caps 5-7 · La vida en la sociedad evolucionada</p>
+                    </div>
+                    <div class="timeline-chapters-landing">
+                        <div class="timeline-chapter-landing chapter-locked" onclick="landingApp.showLockMessage(5)">
+                            <div class="tc-content">
+                                <span class="tc-num">V</span>
+                                <h4 class="tc-title">La Ciudad que Respira</h4>
+                                <p class="tc-desc">Educación, comercio, cultura. El día a día del nuevo mundo.</p>
+                                <div class="tc-badges"><span class="tc-badge-locked">🔒 PREMIUM</span><span class="tc-badge-time">32 min</span></div>
+                            </div>
+                            <div class="tc-lock-overlay"><span class="tc-lock-icon">🔒</span></div>
+                        </div>
+                        <div class="timeline-chapter-landing chapter-locked" onclick="landingApp.showLockMessage(6)">
+                            <div class="tc-content">
+                                <span class="tc-num">VI</span>
+                                <h4 class="tc-title">El Mercado de las Almas</h4>
+                                <p class="tc-desc">El comercio evolucionado. ¿Qué vale una experiencia compartida?</p>
+                                <div class="tc-badges"><span class="tc-badge-locked">🔒 PREMIUM</span><span class="tc-badge-time">29 min</span></div>
+                            </div>
+                            <div class="tc-lock-overlay"><span class="tc-lock-icon">🔒</span></div>
+                        </div>
+                        <div class="timeline-chapter-landing chapter-locked" onclick="landingApp.showLockMessage(7)">
+                            <div class="tc-content">
+                                <span class="tc-num">VII</span>
+                                <h4 class="tc-title">El Arte de Morir Voluntariamente</h4>
+                                <p class="tc-desc">La muerte como elección. La última libertad.</p>
+                                <div class="tc-badges"><span class="tc-badge-locked">🔒 PREMIUM</span><span class="tc-badge-time">40 min</span></div>
+                            </div>
+                            <div class="tc-lock-overlay"><span class="tc-lock-icon">🔒</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="act-block">
+                    <div class="act-header">
+                        <div class="act-badge">ACTO III</div>
+                        <h3 class="act-title-landing">La Singularidad Humana</h3>
+                        <p class="act-desc-landing">Caps 8-10 · El destino final</p>
+                    </div>
+                    <div class="timeline-chapters-landing">
+                        <div class="timeline-chapter-landing chapter-locked" onclick="landingApp.showLockMessage(8)">
+                            <div class="tc-content">
+                                <span class="tc-num">VIII</span>
+                                <h4 class="tc-title">Los Hijos del Silencio</h4>
+                                <p class="tc-desc">Nuevas generaciones. ¿Herencia o condena?</p>
+                                <div class="tc-badges"><span class="tc-badge-locked">🔒 PREMIUM</span><span class="tc-badge-time">33 min</span></div>
+                            </div>
+                            <div class="tc-lock-overlay"><span class="tc-lock-icon">🔒</span></div>
+                        </div>
+                        <div class="timeline-chapter-landing chapter-locked" onclick="landingApp.showLockMessage(9)">
+                            <div class="tc-content">
+                                <span class="tc-num">IX</span>
+                                <h4 class="tc-title">La Última Frontera</h4>
+                                <p class="tc-desc">¿Dónde termina la humanidad y empieza lo divino?</p>
+                                <div class="tc-badges"><span class="tc-badge-locked">🔒 PREMIUM</span><span class="tc-badge-time">45 min</span></div>
+                            </div>
+                            <div class="tc-lock-overlay"><span class="tc-lock-icon">🔒</span></div>
+                        </div>
+                        <div class="timeline-chapter-landing chapter-locked" onclick="landingApp.showLockMessage(10)">
+                            <div class="tc-content">
+                                <span class="tc-num">X</span>
+                                <h4 class="tc-title">Más Allá del Último Día</h4>
+                                <p class="tc-desc">El final que no es un final. El comienzo verdadero.</p>
+                                <div class="tc-badges"><span class="tc-badge-locked">🔒 PREMIUM</span><span class="tc-badge-time">50 min</span></div>
+                            </div>
+                            <div class="tc-lock-overlay"><span class="tc-lock-icon">🔒</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="chapters-cta-landing">
+                <button class="btn-chapters-cta" onclick="landingApp.goToFreeChapter()">
+                    <span>🚀 Comenzar con el Capítulo 1 Gratis</span>
+                    <small>Sin registro · Sin tarjeta · Sin compromiso</small>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section class="section-landing section-dark" id="testimonios">
+        <div class="section-container-landing">
+            <div class="section-header-landing">
+                <span class="section-tag-landing center">Comunidad</span>
+                <h2 class="section-title-landing center">Lo que dicen los <span class="gradient-text">Arquitectos</span></h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"No es ciencia ficción. Es un espejo. Me quité mi propia máscara mientras leía."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">LM</div>
+                        <div class="testimonial-info"><span class="testimonial-name">Luis M.</span><span class="testimonial-role">Lector · Buenos Aires</span></div>
+                    </div>
+                </div>
+                <div class="testimonial-card featured">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"El Capítulo 7 me hizo llorar en el subte. La muerte como elección nunca me había parecido tan liberadora."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">JV</div>
+                        <div class="testimonial-info"><span class="testimonial-name">Juliana V.</span><span class="testimonial-role">Mecenas · México</span></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"La versión visual del Capítulo 3 es una obra de arte. Parece una serie de Netflix pero con alma."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">AR</div>
+                        <div class="testimonial-info"><span class="testimonial-name">Ana R.</span><span class="testimonial-role">Viajero · España</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRECIOS -->
+    <section class="section-landing" id="precios">
+        <div class="section-container-landing">
+            <div class="section-header-landing">
+                <span class="section-tag-landing center">Acceso</span>
+                <h2 class="section-title-landing center">Elige tu <span class="gradient-text">camino</span></h2>
+                <p class="section-subtitle-landing">Desde gratis hasta mecenas. Tú decides hasta dónde llegar.</p>
+            </div>
+            <div class="pricing-grid-landing">
+                <div class="pricing-card-landing">
+                    <div class="pricing-header">
+                        <div class="pricing-badge-landing">Gratis</div>
+                        <h3 class="pricing-name">Explorador</h3>
+                        <div class="pricing-price-landing"><span class="price-currency">$</span><span class="price-num">0</span><span class="price-period">/para siempre</span></div>
+                    </div>
+                    <ul class="pricing-features-landing">
+                        <li class="feature-included"><span class="feature-check">✓</span> Capítulo 1 completo</li>
+                        <li class="feature-included"><span class="feature-check">✓</span> Modo lectura</li>
+                        <li class="feature-included"><span class="feature-check">✓</span> Progreso guardado</li>
+                        <li class="feature-excluded"><span class="feature-x">✗</span> Capítulo 2+</li>
+                        <li class="feature-excluded"><span class="feature-x">✗</span> Audiolibro</li>
+                        <li class="feature-excluded"><span class="feature-x">✗</span> Visuales</li>
+                        <li class="feature-excluded"><span class="feature-x">✗</span> Quizzes</li>
+                    </ul>
+                    <button class="btn-pricing" onclick="landingApp.goToFreeChapter()">Probar Gratis</button>
+                </div>
+                <div class="pricing-card-landing featured">
+                    <div class="pricing-popular-badge">MÁS ELEGIDO</div>
+                    <div class="pricing-header">
+                        <div class="pricing-badge-landing pricing-badge-popular">Viajero</div>
+                        <h3 class="pricing-name">Viajero</h3>
+                        <div class="pricing-price-landing"><span class="price-currency">$</span><span class="price-num">4.99</span><span class="price-period">/mes</span></div>
+                        <div class="pricing-savings">o $49.99/año (ahorrás 2 meses)</div>
+                    </div>
+                    <ul class="pricing-features-landing">
+                        <li class="feature-included"><span class="feature-check">✓</span> Todos los capítulos</li>
+                        <li class="feature-included"><span class="feature-check">✓</span> Modo lectura + audio</li>
+                        <li class="feature-included"><span class="feature-check">✓</span> Todos los quizzes</li>
+                        <li class="feature-included"><span class="feature-check">✓</span> 4 Capítulos visuales</li>
+                        <li class="feature-included"><span class="feature-check">✓</span> Sincronización nube</li>
+                        <li class="feature-included"><span class="feature-check">✓</span> Soporte prioritario</li>
+                        <li class="feature-included"><span class="feature-check">✓</span> Cancelá cuando quieras</li>
+                    </ul>
+                    <button class="btn-pricing btn-pricing-primary" onclick="landingApp.startSubscription('monthly')">Suscribirse Mensual</button>
+                    <button class="btn-pricing btn-pricing-secondary" onclick="landingApp.startSubscription('yearly')">Suscribirse Anual</button>
+                </div>
+                <div class="pricing-card-landing">
+                    <div class="pricing-header">
+                        <div class="pricing-badge-landing">Apoyo</div>
+                        <h3 class="pricing-name">Mecenas</h3>
+                        <div class="pricing-price-landing"><span class="price-currency">$</span><span class="price-num">?</span><span class="price-period">tú eliges</span></div>
+                    </div>
+                    <ul class="pricing-features-landing">
+                        <li class="feature-included"><span class="feature-check">✓</span> Todo lo de Viajero</li>
+                        <li class="feature-included"><span class="feature-check">✓</span> Acceso anticipado a nuevos capítulos</li>
+                        <li class="feature-included"><span class="feature-check">✓</span> Nombre en los créditos</li>
+                        <li class="feature-included"><span class="feature-check">✓</span> Sesión mensual con el autor</li>
+                        <li class="feature-included"><span class="feature-check">✓</span> Copia física firmada (envío incluido)</li>
+                    </ul>
+                    <div class="donation-buttons-landing">
+                        <button class="btn-donation" onclick="landingApp.donate(5)">$5</button>
+                        <button class="btn-donation" onclick="landingApp.donate(10)">$10</button>
+                        <button class="btn-donation" onclick="landingApp.donate(20)">$20</button>
+                        <button class="btn-donation" onclick="landingApp.donate(50)">$50</button>
+                    </div>
+                    <button class="btn-pricing btn-pricing-mecenas" onclick="landingApp.donateCustom()">Monto personalizado</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section-landing section-dark" id="faq">
+        <div class="section-container-landing">
+            <div class="section-header-landing">
+                <span class="section-tag-landing center">Preguntas</span>
+                <h2 class="section-title-landing center">Todo lo que necesitas <span class="gradient-text">saber</span></h2>
+            </div>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <button class="faq-question" onclick="landingApp.toggleFaq(this)">
+                        <span>¿Realmente es gratis el Capítulo 1?</span><span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>Sí, completamente. Sin registro, sin tarjeta, sin compromiso. Entrás, leés, y si te engancha, seguís.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="landingApp.toggleFaq(this)">
+                        <span>¿Qué necesito para el Capítulo 2?</span><span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>Solo un registro con email. No pedimos tarjeta ni pago. Queremos que conozcas la historia antes de que decidas invertir en ella.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="landingApp.toggleFaq(this)">
+                        <span>¿Puedo cancelar la suscripción cuando quiera?</span><span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>Absolutamente. Sin preguntas, sin complicaciones. Cancelás desde tu perfil y seguís con acceso hasta el final del período pagado.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="landingApp.toggleFaq(this)">
+                        <span>¿Funciona sin internet?</span><span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>Una vez que descargás los capítulos, sí. La app es una PWA (Progressive Web App), se instala en tu celular y funciona offline.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="landingApp.toggleFaq(this)">
+                        <span>¿Qué pasa con mis datos?</span><span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>Tu email y progreso de lectura se guardan en Firebase (Google). No vendemos ni compartimos datos. Podés pedir la eliminación completa en cualquier momento.</p></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="landingApp.toggleFaq(this)">
+                        <span>¿Hay versión en papel?</span><span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer"><p>Los mecenas ($20+) reciben una edición física firmada. También planeamos una edición limitada para 2027.</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="section-cta-final">
+        <div class="cta-final-bg">
+            <div class="cta-final-particles" id="ctaParticles"></div>
+        </div>
+        <div class="cta-final-content">
+            <h2>El silencio está <span class="gradient-text">esperando</span></h2>
+            <p>¿Serás tú el siguiente en quitarte la máscara?</p>
+            <div class="cta-final-buttons">
+                <button class="btn-cta-final-primary" onclick="landingApp.goToFreeChapter()">
+                    <span>📖 Leer Capítulo 1 Gratis</span>
+                    <small>Sin registro · Sin tarjeta · 25 minutos que pueden cambiar tu perspectiva</small>
+                </button>
+                <button class="btn-cta-final-secondary" onclick="landingApp.showLoginModal()">
+                    <span>✨ Crear cuenta gratuita</span>
+                    <small>Accedé al Capítulo 2 y a la comunidad de Arquitectos</small>
+                </button>
+            </div>
+            <div class="cta-final-trust">
+                <span>🔒 Pago seguro</span>
+                <span>✓ Cancelá cuando quieras</span>
+                <span>🌎 +2,000 lectores</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer-landing">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="footer-logo"><span class="footer-logo-icon">◉</span><span class="footer-logo-text">CROMADE</span></div>
+                <p class="footer-tagline">Más allá del último día</p>
+                <div class="footer-social">
+                    <a href="#" class="social-link" title="Instagram">📷</a>
+                    <a href="#" class="social-link" title="Twitter">🐦</a>
+                    <a href="#" class="social-link" title="YouTube">▶</a>
+                    <a href="#" class="social-link" title="Discord">💬</a>
+                </div>
+            </div>
+            <div class="footer-links-group">
+                <div class="footer-links-col">
+                    <h4>Experiencia</h4>
+                    <a href="#experiencia">Modos de lectura</a>
+                    <a href="#capitulos">Capítulos</a>
+                    <a href="#precios">Precios</a>
+                    <a href="#faq">Preguntas frecuentes</a>
+                </div>
+                <div class="footer-links-col">
+                    <h4>Comunidad</h4>
+                    <a href="#">Foro de Arquitectos</a>
+                    <a href="#">Newsletter</a>
+                    <a href="#">Eventos</a>
+                </div>
+                <div class="footer-links-col">
+                    <h4>Legal</h4>
+                    <a href="#" onclick="landingApp.showTerms()">Términos de uso</a>
+                    <a href="#" onclick="landingApp.showPrivacy()">Privacidad</a>
+                    <a href="#" onclick="landingApp.showCookies()">Cookies</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 CROMADE. Todos los derechos reservados. · Hecho con ❤️ y mucho silencio consciente.</p>
+        </div>
+    </footer>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-auth-landing">
+            <button class="modal-close-btn" onclick="landingApp.closeLoginModal()">×</button>
+            <div class="auth-brand">
+                <span class="auth-brand-icon">◉</span>
+                <span class="auth-brand-text">CROMADE</span>
+            </div>
+            <div class="auth-tabs-landing">
+                <button class="auth-tab-landing active" onclick="landingApp.switchAuthTab('login')" id="tabLogin">Iniciar Sesión</button>
+                <button class="auth-tab-landing" onclick="landingApp.switchAuthTab('register')" id="tabRegister">Crear Cuenta</button>
+            </div>
+            <div class="auth-panel-landing active" id="loginPanel">
+                <h3>Bienvenido de vuelta, Arquitecto</h3>
+                <p class="auth-subtitle">Tu progreso te espera.</p>
+                <form onsubmit="landingApp.handleLogin(event)">
+                    <div class="form-group-landing">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" placeholder="tu@email.com" required>
+                    </div>
+                    <div class="form-group-landing">
+                        <label>Contraseña</label>
+                        <input type="password" id="loginPassword" placeholder="Tu contraseña" required>
+                        <a href="#" class="form-forgot" onclick="landingApp.showForgotPassword()">¿Olvidaste tu contraseña?</a>
+                    </div>
+                    <button type="submit" class="btn-auth-submit-landing">Iniciar Sesión</button>
+                </form>
+                <div class="auth-divider"><span>o</span></div>
+                <button class="btn-auth-google" onclick="landingApp.loginWithGoogle()">
+                    <span class="btn-google-icon">G</span>
+                    <span>Continuar con Google</span>
+                </button>
+            </div>
+            <div class="auth-panel-landing" id="registerPanel">
+                <h3>Unite a los Arquitectos</h3>
+                <p class="auth-subtitle">El silencio necesita voces.</p>
+                <form onsubmit="landingApp.handleRegister(event)">
+                    <div class="form-group-landing">
+                        <label>Nombre</label>
+                        <input type="text" id="regName" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="form-group-landing">
+                        <label>Email</label>
+                        <input type="email" id="regEmail" placeholder="tu@email.com" required>
+                    </div>
+                    <div class="form-group-landing">
+                        <label>Contraseña</label>
+                        <input type="password" id="regPassword" placeholder="Mínimo 8 caracteres" required minlength="8">
+                    </div>
+                    <div class="form-group-landing form-checkbox">
+                        <input type="checkbox" id="regTerms" required>
+                        <label for="regTerms">Acepto los <a href="#" onclick="landingApp.showTerms()">términos</a> y la <a href="#" onclick="landingApp.showPrivacy()">privacidad</a></label>
+                    </div>
+                    <button type="submit" class="btn-auth-submit-landing">Crear Cuenta Gratis</button>
+                </form>
+                <div class="auth-divider"><span>o</span></div>
+                <button class="btn-auth-google" onclick="landingApp.loginWithGoogle()">
+                    <span class="btn-google-icon">G</span>
+                    <span>Registrarme con Google</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAYMENT MODAL -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-payment">
+            <button class="modal-close-btn" onclick="landingApp.closePaymentModal()">×</button>
+            <div class="payment-brand">
+                <span class="payment-brand-icon">◉</span>
+                <span class="payment-brand-text">CROMADE</span>
+            </div>
+            <h3 id="paymentTitle">Suscribirse</h3>
+            <p class="payment-subtitle" id="paymentSubtitle">Desbloqueá todo el universo CROMADE</p>
+            <div class="payment-summary" id="paymentSummary">
+                <div class="payment-summary-item">
+                    <span>Plan</span>
+                    <span id="planName">Viajero Mensual</span>
+                </div>
+                <div class="payment-summary-item">
+                    <span>Precio</span>
+                    <span id="planPrice">$4.99/mes</span>
+                </div>
+            </div>
+            <div class="payment-methods-landing">
+                <div class="payment-method-landing" onclick="landingApp.selectPayment('mercadopago')">
+                    <div class="payment-method-icon">💳</div>
+                    <div class="payment-method-info">
+                        <span class="payment-method-name">MercadoPago</span>
+                        <span class="payment-method-desc">Tarjeta, efectivo, transferencia</span>
+                    </div>
+                    <div class="payment-method-check">○</div>
+                </div>
+                <div class="payment-method-landing" onclick="landingApp.selectPayment('stripe')">
+                    <div class="payment-method-icon">💳</div>
+                    <div class="payment-method-info">
+                        <span class="payment-method-name">Stripe</span>
+                        <span class="payment-method-desc">Tarjetas internacionales</span>
+                    </div>
+                    <div class="payment-method-check">○</div>
+                </div>
+                <div class="payment-method-landing" onclick="landingApp.selectPayment('crypto')">
+                    <div class="payment-method-icon">₿</div>
+                    <div class="payment-method-info">
+                        <span class="payment-method-name">Cripto</span>
+                        <span class="payment-method-desc">BTC, ETH, USDC</span>
+                    </div>
+                    <div class="payment-method-check">○</div>
+                </div>
+            </div>
+            <button class="btn-payment-confirm" id="btnConfirmPayment" onclick="landingApp.processPayment()" disabled>Confirmar pago</button>
+            <p class="payment-security">🔒 Pagos seguros encriptados. No almacenamos datos de tarjeta.</p>
+        </div>
+    </div>
+
+    <!-- TRAILER MODAL -->
+    <div class="modal-overlay" id="trailerModal">
+        <div class="modal-trailer">
+            <button class="modal-close-btn" onclick="landingApp.closeTrailerModal()">×</button>
+            <div class="trailer-placeholder">
+                <div class="trailer-play-btn">▶</div>
+                <p class="trailer-text">Trailer cinematográfico<br><small>Próximamente</small></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container-landing" id="toastContainer"></div>
+
+    <script src="landing.js"></script>
+</body>
+</html>
