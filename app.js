@@ -226,31 +226,42 @@ const app = {
     // CARGAR CAPÍTULO
     // ============================================
     loadChapter(id) {
-        const chapter = CROMADE_DATA.getChapter(id);
-        if (!chapter) return;
+    const chapter = CROMADE_DATA.getChapter(id);
+    if (!chapter) return;
 
-        this.currentChapter = chapter;
-        this.currentSection = 0;
+    this.currentChapter = chapter;
+    this.currentSection = 0;
 
-        // Ocultar selector, mostrar reader
-        document.getElementById('chapterSelector').classList.add('hidden');
-        document.getElementById('reader').classList.remove('hidden');
-        document.getElementById('visualMode').classList.add('hidden');
-        document.getElementById('quizMode').classList.add('hidden');
+    // IMPORTANTE: Ocultar TODAS las vistas primero
+    document.getElementById('chapterSelector').classList.add('hidden');
+    document.getElementById('reader').classList.remove('hidden');
+    document.getElementById('visualMode').classList.add('hidden');
+    document.getElementById('quizMode').classList.add('hidden');
+    document.getElementById('audioPlayer').classList.add('hidden');
 
-        // Renderizar contenido
-        document.getElementById('readerContent').innerHTML = chapter.content;
+    // Renderizar contenido del capítulo
+    const readerContent = document.getElementById('readerContent');
+    readerContent.innerHTML = chapter.content;
 
-        // Actualizar progreso
-        this.updateProgressBar();
-        this.updateNavButtons();
+    // Asegurar que el reader sea visible
+    const reader = document.getElementById('reader');
+    reader.style.display = 'block';
+    reader.classList.remove('hidden');
 
-        // Scroll al inicio
-        document.querySelector('.app-main').scrollTop = 0;
+    // Actualizar progreso
+    this.updateProgressBar();
+    this.updateNavButtons();
 
-        // Auto-guardar progreso al leer
-        this.trackReadingProgress();
-    },
+    // Scroll al inicio del contenido
+    const appMain = document.querySelector('.app-main');
+    if (appMain) appMain.scrollTop = 0;
+
+    // Guardar progreso
+    this.updateChapterProgress(chapter.id, 0);
+
+    // Inicializar tracking de lectura
+    this.trackReadingProgress();
+}
 
     trackReadingProgress() {
         const reader = document.querySelector('.app-main');
@@ -482,24 +493,33 @@ const app = {
     // ============================================
     // NAVEGACIÓN
     // ============================================
-    showChapters() {
-        this.stopAudio();
-        this.currentChapter = null;
+   showChapters() {
+    this.stopAudio();
+    this.currentChapter = null;
 
-        document.getElementById('chapterSelector').classList.remove('hidden');
-        document.getElementById('reader').classList.add('hidden');
-        document.getElementById('visualMode').classList.add('hidden');
-        document.getElementById('quizMode').classList.add('hidden');
-        document.getElementById('audioPlayer').classList.add('hidden');
+    // Ocultar todo
+    document.getElementById('reader').classList.add('hidden');
+    document.getElementById('reader').style.display = 'none';
+    document.getElementById('visualMode').classList.add('hidden');
+    document.getElementById('quizMode').classList.add('hidden');
+    document.getElementById('audioPlayer').classList.add('hidden');
 
-        this.renderChapters();
-    },
+    // Mostrar selector
+    const selector = document.getElementById('chapterSelector');
+    selector.classList.remove('hidden');
+    selector.style.display = 'block';
+
+    this.renderChapters();
+}
 
     showReader() {
-        document.getElementById('reader').classList.remove('hidden');
-        document.getElementById('quizMode').classList.add('hidden');
-        document.getElementById('visualMode').classList.add('hidden');
-    },
+    const reader = document.getElementById('reader');
+    reader.classList.remove('hidden');
+    reader.style.display = 'block';
+
+    document.getElementById('quizMode').classList.add('hidden');
+    document.getElementById('visualMode').classList.add('hidden');
+}
 
     toggleMenu() {
         const overlay = document.getElementById('menuOverlay');
