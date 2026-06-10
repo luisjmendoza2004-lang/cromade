@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CROMADE — App Interactiva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- APP CONTAINER -->
+    <div id="app">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-brand">
+                <span class="header-icon">◉</span>
+                <span class="header-title">CROMADE</span>
+            </div>
+            <div class="header-actions">
+                <button id="btnMenu" class="btn-icon" title="Menú">☰</button>
+                <button id="btnUser" class="btn-icon" title="Usuario">👤</button>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="app-main">
+            <!-- CHAPTER SELECTOR -->
+            <div id="chapterSelector" class="chapter-selector">
+                <h2>Seleccionar Capítulo</h2>
+                <div class="chapters-grid" id="chaptersGrid"></div>
+            </div>
+
+            <!-- READER -->
+            <div id="reader" class="reader hidden">
+                <div class="reader-header">
+                    <button id="btnBack" class="btn-back">← Volver</button>
+                    <div class="reader-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <span class="progress-text" id="progressText">0%</span>
+                    </div>
+                </div>
+                
+                <div class="reader-content" id="readerContent"></div>
+                
+                <div class="reader-controls">
+                    <button id="btnPrev" class="btn-nav">← Anterior</button>
+                    <button id="btnQuiz" class="btn-quiz">🎯 Quiz</button>
+                    <button id="btnAudio" class="btn-audio">🔊 Audio</button>
+                    <button id="btnNext" class="btn-nav">Siguiente →</button>
+                </div>
+            </div>
+
+            <!-- VISUAL MODE -->
+            <div id="visualMode" class="visual-mode hidden">
+                <div class="visual-header">
+                    <button id="btnBackVisual" class="btn-back">← Volver</button>
+                    <h3 id="visualTitle">Capítulo Visual</h3>
+                </div>
+                <div class="visual-scene" id="visualScene"></div>
+                <div class="visual-dialogue" id="visualDialogue"></div>
+                <div class="visual-choices" id="visualChoices"></div>
+            </div>
+
+            <!-- QUIZ -->
+            <div id="quizMode" class="quiz-mode hidden">
+                <div class="quiz-header">
+                    <button id="btnBackQuiz" class="btn-back">← Volver</button>
+                    <h3>Quiz del Capítulo</h3>
+                </div>
+                <div class="quiz-content" id="quizContent"></div>
+            </div>
+        </main>
+
+        <!-- AUDIO PLAYER -->
+        <div id="audioPlayer" class="audio-player hidden">
+            <div class="audio-visualizer" id="audioVisualizer">
+                <div class="audio-bar"></div>
+                <div class="audio-bar"></div>
+                <div class="audio-bar"></div>
+                <div class="audio-bar"></div>
+                <div class="audio-bar"></div>
+            </div>
+            <div class="audio-controls">
+                <button id="btnPlayPause" class="btn-audio-control">▶</button>
+                <div class="audio-info">
+                    <span id="audioTitle">Audiolibro</span>
+                    <span id="audioTime">0:00 / 0:00</span>
+                </div>
+                <div class="audio-speed">
+                    <button id="btnSpeed" class="btn-speed">1x</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MENU OVERLAY -->
+        <div id="menuOverlay" class="overlay hidden">
+            <div class="menu-panel">
+                <button id="btnCloseMenu" class="btn-close">×</button>
+                <h3>Menú</h3>
+                <nav class="menu-nav">
+                    <button onclick="app.showChapters()">📖 Capítulos</button>
+                    <button onclick="app.showBookmarks()">🔖 Marcadores</button>
+                    <button onclick="app.showSettings()">⚙️ Configuración</button>
+                    <button onclick="app.showHelp()">❓ Ayuda</button>
+                    <button onclick="app.logout()">🚪 Cerrar Sesión</button>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
