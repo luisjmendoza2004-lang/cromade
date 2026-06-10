@@ -1,48 +1,89 @@
 // ============================================
-// CROMADE APP - VERSIÓN MÍNIMA FUNCIONAL
+// CROMADE APP - VERSIÓN ULTRA SIMPLE
 // ============================================
 
 const app = {
-    init() {
-        this.initEventListeners();
-        this.renderChapters();
+    currentChapter: null,
 
-        // Cargar capítulo desde URL si existe
+    init() {
+        console.log('App iniciando...');
+        this.renderChapters();
+        this.setupButtons();
+
+        // Verificar si hay capítulo en URL
         const urlParams = new URLSearchParams(window.location.search);
         const chapterId = parseInt(urlParams.get('chapter'));
+        console.log('Chapter ID en URL:', chapterId);
+
         if (chapterId) {
-            setTimeout(() => this.loadChapter(chapterId), 200);
+            setTimeout(() => {
+                console.log('Cargando capítulo desde URL...');
+                this.loadChapter(chapterId);
+            }, 500);
         }
     },
 
-    initEventListeners() {
-        document.getElementById('btnMenu').addEventListener('click', () => this.toggleMenu());
-        document.getElementById('btnUser').addEventListener('click', () => alert('Login en landing.html'));
-        document.getElementById('btnBack').addEventListener('click', () => this.showChapters());
-        document.getElementById('btnPrev').addEventListener('click', () => this.scrollReader(-500));
-        document.getElementById('btnNext').addEventListener('click', () => this.scrollReader(500));
-        document.getElementById('btnQuiz').addEventListener('click', () => this.showQuiz());
-        document.getElementById('btnAudio').addEventListener('click', () => alert('Audio: usa el botón del reproductor abajo'));
-        document.getElementById('btnBackVisual').addEventListener('click', () => this.showReader());
-        document.getElementById('btnBackQuiz').addEventListener('click', () => this.showReader());
-        document.getElementById('btnCloseMenu').addEventListener('click', () => this.toggleMenu());
-    },
+    setupButtons() {
+        // Botón volver
+        const btnBack = document.getElementById('btnBack');
+        if (btnBack) {
+            btnBack.onclick = () => {
+                console.log('Click: Volver');
+                this.showChapters();
+            };
+        }
 
-    scrollReader(amount) {
-        document.querySelector('.app-main').scrollBy({ top: amount, behavior: 'smooth' });
+        // Botón menú
+        const btnMenu = document.getElementById('btnMenu');
+        if (btnMenu) {
+            btnMenu.onclick = () => {
+                const menu = document.getElementById('menuOverlay');
+                if (menu) menu.classList.toggle('hidden');
+            };
+        }
+
+        // Botón cerrar menú
+        const btnCloseMenu = document.getElementById('btnCloseMenu');
+        if (btnCloseMenu) {
+            btnCloseMenu.onclick = () => {
+                const menu = document.getElementById('menuOverlay');
+                if (menu) menu.classList.add('hidden');
+            };
+        }
+
+        // Botón usuario (sin alerta)
+        const btnUser = document.getElementById('btnUser');
+        if (btnUser) {
+            btnUser.onclick = () => {
+                console.log('Click: Usuario');
+                window.location.href = 'landing.html';
+            };
+        }
     },
 
     renderChapters() {
+        console.log('Renderizando capítulos...');
         const grid = document.getElementById('chaptersGrid');
-        if (!grid) return;
+        if (!grid) {
+            console.error('ERROR: No se encontró chaptersGrid');
+            return;
+        }
+
         grid.innerHTML = '';
+
+        if (typeof CROMADE_DATA === 'undefined') {
+            console.error('ERROR: CROMADE_DATA no está definido');
+            grid.innerHTML = '<p style="color:red; text-align:center;">Error: No se cargaron los datos</p>';
+            return;
+        }
+
+        console.log('Capítulos disponibles:', CROMADE_DATA.chapters.length);
 
         CROMADE_DATA.chapters.forEach(chapter => {
             const card = document.createElement('div');
             card.className = 'chapter-card';
 
             const isFree = chapter.status === 'free';
-            const isFreeReg = chapter.status === 'free-reg';
             const isLocked = chapter.status === 'locked';
 
             if (isFree) card.classList.add('free');
@@ -51,7 +92,7 @@ const app = {
             let badgeClass = 'badge-locked';
             let badgeText = '🔒 PREMIUM';
             if (isFree) { badgeClass = 'badge-free'; badgeText = 'GRATIS'; }
-            else if (isFreeReg) { badgeClass = 'badge-free-reg'; badgeText = 'REGISTRO'; }
+            else if (chapter.status === 'free-reg') { badgeClass = 'badge-free-reg'; badgeText = 'REGISTRO'; }
 
             card.innerHTML = `
                 <div class="chapter-number">${chapter.number}</div>
@@ -63,82 +104,94 @@ const app = {
                 </div>
             `;
 
-            card.addEventListener('click', () => {
+            card.onclick = () => {
+                console.log('Click en capítulo:', chapter.id, chapter.title);
                 if (isLocked) {
                     alert('Este capítulo requiere suscripción');
                     return;
                 }
                 this.loadChapter(chapter.id);
-            });
+            };
 
             grid.appendChild(card);
         });
+
+        console.log('Capítulos renderizados correctamente');
     },
 
     loadChapter(id) {
+        console.log('=== CARGANDO CAPÍTULO', id, '===');
+
+        if (typeof CROMADE_DATA === 'undefined') {
+            console.error('ERROR: CROMADE_DATA no está definido');
+            alert('Error: No se pudieron cargar los datos del capítulo');
+            return;
+        }
+
         const chapter = CROMADE_DATA.getChapter(id);
         if (!chapter) {
+            console.error('ERROR: Capítulo no encontrado:', id);
             alert('Capítulo no encontrado');
             return;
         }
 
+        console.log('Capítulo encontrado:', chapter.title);
+        console.log('Contenido length:', chapter.content.length);
+
         this.currentChapter = chapter;
 
-        // OCULTAR SELECTOR
+        // 1. OCULTAR SELECTOR
         const selector = document.getElementById('chapterSelector');
         if (selector) {
             selector.classList.add('hidden');
             selector.style.display = 'none';
+            console.log('Selector ocultado');
         }
 
-        // MOSTRAR READER
+        // 2. MOSTRAR READER
         const reader = document.getElementById('reader');
         if (reader) {
             reader.classList.remove('hidden');
             reader.style.display = 'block';
-            reader.style.visibility = 'visible';
-            reader.style.opacity = '1';
+            console.log('Reader mostrado');
+        } else {
+            console.error('ERROR: No se encontró el reader');
         }
 
-        // OCULTAR OTROS
+        // 3. OCULTAR OTROS
         const visualMode = document.getElementById('visualMode');
         const quizMode = document.getElementById('quizMode');
-        if (visualMode) {
-            visualMode.classList.add('hidden');
-            visualMode.style.display = 'none';
-        }
-        if (quizMode) {
-            quizMode.classList.add('hidden');
-            quizMode.style.display = 'none';
-        }
+        if (visualMode) visualMode.style.display = 'none';
+        if (quizMode) quizMode.style.display = 'none';
 
-        // PONER CONTENIDO
+        // 4. PONER CONTENIDO
         const readerContent = document.getElementById('readerContent');
         if (readerContent) {
             readerContent.innerHTML = chapter.content;
             readerContent.style.display = 'block';
-            readerContent.style.visibility = 'visible';
+            console.log('Contenido insertado');
+        } else {
+            console.error('ERROR: No se encontró readerContent');
         }
 
-        // Actualizar barra de progreso
+        // 5. ACTUALIZAR PROGRESO
         const progressFill = document.getElementById('progressFill');
         const progressText = document.getElementById('progressText');
         if (progressFill) progressFill.style.width = '0%';
         if (progressText) progressText.textContent = '0%';
 
-        // Scroll arriba
+        // 6. SCROLL ARRIBA
         const appMain = document.querySelector('.app-main');
         if (appMain) appMain.scrollTop = 0;
 
-        console.log('Capítulo cargado:', chapter.title);
-        console.log('Contenido HTML:', chapter.content.substring(0, 100) + '...');
+        console.log('=== CAPÍTULO CARGADO ===');
     },
 
     showChapters() {
+        console.log('Volviendo a selector...');
+
         const selector = document.getElementById('chapterSelector');
         const reader = document.getElementById('reader');
-        const visualMode = document.getElementById('visualMode');
-        const quizMode = document.getElementById('quizMode');
 
         if (selector) {
             selector.classList.remove('hidden');
@@ -148,112 +201,16 @@ const app = {
             reader.classList.add('hidden');
             reader.style.display = 'none';
         }
-        if (visualMode) {
-            visualMode.classList.add('hidden');
-            visualMode.style.display = 'none';
-        }
-        if (quizMode) {
-            quizMode.classList.add('hidden');
-            quizMode.style.display = 'none';
-        }
 
         this.currentChapter = null;
-        this.renderChapters();
-    },
-
-    showReader() {
-        const reader = document.getElementById('reader');
-        const quizMode = document.getElementById('quizMode');
-        const visualMode = document.getElementById('visualMode');
-
-        if (reader) {
-            reader.classList.remove('hidden');
-            reader.style.display = 'block';
-        }
-        if (quizMode) {
-            quizMode.classList.add('hidden');
-            quizMode.style.display = 'none';
-        }
-        if (visualMode) {
-            visualMode.classList.add('hidden');
-            visualMode.style.display = 'none';
-        }
-    },
-
-    showQuiz() {
-        if (!this.currentChapter || !this.currentChapter.quiz) {
-            alert('Este capítulo no tiene quiz');
-            return;
-        }
-
-        const reader = document.getElementById('reader');
-        const quizMode = document.getElementById('quizMode');
-
-        if (reader) {
-            reader.classList.add('hidden');
-            reader.style.display = 'none';
-        }
-        if (quizMode) {
-            quizMode.classList.remove('hidden');
-            quizMode.style.display = 'block';
-        }
-
-        const container = document.getElementById('quizContent');
-        if (!container) return;
-
-        let currentQuestion = 0;
-        let score = 0;
-        const quiz = this.currentChapter.quiz;
-
-        const renderQuestion = () => {
-            if (currentQuestion >= quiz.length) {
-                const percent = Math.round((score / quiz.length) * 100);
-                container.innerHTML = `
-                    <div class="quiz-result">
-                        <div class="quiz-result-score">${percent}%</div>
-                        <p class="quiz-result-text">${percent >= 60 ? '¡Bien hecho!' : 'Seguí practicando'}</p>
-                        <button class="btn-quiz" onclick="app.showReader()">Volver al capítulo</button>
-                    </div>
-                `;
-                return;
-            }
-
-            const q = quiz[currentQuestion];
-            container.innerHTML = `
-                <div class="quiz-question">Pregunta ${currentQuestion + 1} de ${quiz.length}</div>
-                <h3>${q.question}</h3>
-                <div class="quiz-options">
-                    ${q.options.map((opt, i) => `
-                        <button class="quiz-option" onclick="app.answerQuiz(${i})">${opt}</button>
-                    `).join('')}
-                </div>
-            `;
-        };
-
-        this.answerQuiz = (answerIndex) => {
-            const q = quiz[currentQuestion];
-            const buttons = container.querySelectorAll('.quiz-option');
-            buttons.forEach((btn, i) => {
-                btn.disabled = true;
-                if (i === q.correct) btn.classList.add('correct');
-                if (i === answerIndex && i !== q.correct) btn.classList.add('incorrect');
-            });
-            if (answerIndex === q.correct) score++;
-            setTimeout(() => {
-                currentQuestion++;
-                renderQuestion();
-            }, 1500);
-        };
-
-        renderQuestion();
-    },
-
-    toggleMenu() {
-        const overlay = document.getElementById('menuOverlay');
-        if (overlay) overlay.classList.toggle('hidden');
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+// ============================================
+// INICIALIZAR CUANDO EL DOM ESTÉ LISTO
+// ============================================
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => app.init());
+} else {
     app.init();
-});
+}
