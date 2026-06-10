@@ -55,8 +55,26 @@ html, body {
 }
 
 /* UTILITIES */
+
 .hidden {
     display: none !important;
+}
+
+/* Fix para que el reader sea visible cuando NO tiene hidden */
+#reader:not(.hidden) {
+    display: block !important;
+}
+
+#chapterSelector:not(.hidden) {
+    display: block !important;
+}
+
+#visualMode:not(.hidden) {
+    display: block !important;
+}
+
+#quizMode:not(.hidden) {
+    display: block !important;
 }
 
 /* ============================================
