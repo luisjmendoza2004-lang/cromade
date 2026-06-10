@@ -3,7 +3,6 @@
 // ============================================
 
 const app = {
-    // Firebase config (REEMPLAZAR CON TUS CREDENCIALES)
     firebaseConfig: {
         apiKey: "TU_API_KEY",
         authDomain: "TU_PROYECTO.firebaseapp.com",
@@ -13,7 +12,6 @@ const app = {
         appId: "TU_APP_ID"
     },
 
-    // Estado
     user: null,
     currentChapter: null,
     currentSection: 0,
@@ -23,9 +21,6 @@ const app = {
     speech: null,
     progress: {},
 
-    // ============================================
-    // INICIALIZACIÓN
-    // ============================================
     init() {
         this.initFirebase();
         this.initEventListeners();
@@ -33,11 +28,10 @@ const app = {
         this.checkAuthState();
         this.loadProgress();
 
-        // Verificar si hay capítulo en URL
         const urlParams = new URLSearchParams(window.location.search);
         const chapterId = parseInt(urlParams.get('chapter'));
         if (chapterId) {
-            this.loadChapter(chapterId);
+            setTimeout(() => this.loadChapter(chapterId), 100);
         }
     },
 
@@ -50,39 +44,23 @@ const app = {
     },
 
     initEventListeners() {
-        // Header
         document.getElementById('btnMenu').addEventListener('click', () => this.toggleMenu());
         document.getElementById('btnUser').addEventListener('click', () => this.showAuth());
-
-        // Reader
         document.getElementById('btnBack').addEventListener('click', () => this.showChapters());
         document.getElementById('btnPrev').addEventListener('click', () => this.prevSection());
         document.getElementById('btnNext').addEventListener('click', () => this.nextSection());
         document.getElementById('btnQuiz').addEventListener('click', () => this.showQuiz());
         document.getElementById('btnAudio').addEventListener('click', () => this.toggleAudio());
-
-        // Visual
         document.getElementById('btnBackVisual').addEventListener('click', () => this.showReader());
-
-        // Quiz
         document.getElementById('btnBackQuiz').addEventListener('click', () => this.showReader());
-
-        // Menu
         document.getElementById('btnCloseMenu').addEventListener('click', () => this.toggleMenu());
-
-        // Audio
         document.getElementById('btnPlayPause').addEventListener('click', () => this.toggleAudio());
         document.getElementById('btnSpeed').addEventListener('click', () => this.changeSpeed());
-
-        // Cerrar menú al hacer click fuera
         document.getElementById('menuOverlay').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) this.toggleMenu();
         });
     },
 
-    // ============================================
-    // AUTENTICACIÓN
-    // ============================================
     checkAuthState() {
         if (this.auth) {
             this.auth.onAuthStateChanged(user => {
@@ -108,7 +86,6 @@ const app = {
         if (this.user) {
             this.toggleMenu();
         } else {
-            // Redirigir a landing para login
             window.location.href = 'landing.html';
         }
     },
@@ -123,9 +100,6 @@ const app = {
         }
     },
 
-    // ============================================
-    // PROGRESO
-    // ============================================
     loadProgress() {
         const saved = localStorage.getItem('cromade_progress');
         if (saved) {
@@ -158,18 +132,15 @@ const app = {
         this.saveProgress();
     },
 
-    // ============================================
-    // RENDERIZADO DE CAPÍTULOS
-    // ============================================
     renderChapters() {
         const grid = document.getElementById('chaptersGrid');
+        if (!grid) return;
         grid.innerHTML = '';
 
         CROMADE_DATA.chapters.forEach(chapter => {
             const card = document.createElement('div');
             card.className = 'chapter-card';
 
-            // Determinar estado
             const isFree = chapter.status === 'free';
             const isFreeReg = chapter.status === 'free-reg';
             const isLocked = chapter.status === 'locked';
@@ -222,85 +193,97 @@ const app = {
             grid.appendChild(card);
         });
     },
-      // ============================================
-    // CARGAR CAPÍTULO
-    // ============================================
+
     loadChapter(id) {
-    const chapter = CROMADE_DATA.getChapter(id);
-    if (!chapter) return;
+        const chapter = CROMADE_DATA.getChapter(id);
+        if (!chapter) return;
 
-    this.currentChapter = chapter;
-    this.currentSection = 0;
+        this.currentChapter = chapter;
+        this.currentSection = 0;
 
-    // IMPORTANTE: Ocultar TODAS las vistas primero
-    document.getElementById('chapterSelector').classList.add('hidden');
-    document.getElementById('reader').classList.remove('hidden');
-    document.getElementById('visualMode').classList.add('hidden');
-    document.getElementById('quizMode').classList.add('hidden');
-    document.getElementById('audioPlayer').classList.add('hidden');
+        // Ocultar selector
+        const selector = document.getElementById('chapterSelector');
+        if (selector) selector.classList.add('hidden');
 
-    // Renderizar contenido del capítulo
-    const readerContent = document.getElementById('readerContent');
-    readerContent.innerHTML = chapter.content;
+        // Mostrar reader
+        const reader = document.getElementById('reader');
+        if (reader) {
+            reader.classList.remove('hidden');
+            reader.style.display = 'block';
+        }
 
-    // Asegurar que el reader sea visible
-    const reader = document.getElementById('reader');
-    reader.style.display = 'block';
-    reader.classList.remove('hidden');
+        // Ocultar otros modos
+        const visualMode = document.getElementById('visualMode');
+        const quizMode = document.getElementById('quizMode');
+        const audioPlayer = document.getElementById('audioPlayer');
+        if (visualMode) visualMode.classList.add('hidden');
+        if (quizMode) quizMode.classList.add('hidden');
+        if (audioPlayer) audioPlayer.classList.add('hidden');
 
-    // Actualizar progreso
-    this.updateProgressBar();
-    this.updateNavButtons();
+        // Renderizar contenido
+        const readerContent = document.getElementById('readerContent');
+        if (readerContent) {
+            readerContent.innerHTML = chapter.content;
+        }
 
-    // Scroll al inicio del contenido
-    const appMain = document.querySelector('.app-main');
-    if (appMain) appMain.scrollTop = 0;
+        // Actualizar progreso
+        this.updateProgressBar();
+        this.updateNavButtons();
 
-    // Guardar progreso
-    this.updateChapterProgress(chapter.id, 0);
+        // Scroll al inicio
+        const appMain = document.querySelector('.app-main');
+        if (appMain) appMain.scrollTop = 0;
 
-    // Inicializar tracking de lectura
-    this.trackReadingProgress();
-}
+        // Guardar progreso inicial
+        this.updateChapterProgress(chapter.id, 0);
+
+        // Inicializar tracking de lectura
+        this.trackReadingProgress();
+    },
 
     trackReadingProgress() {
-        const reader = document.querySelector('.app-main');
-        const content = document.getElementById('readerContent');
+        const appMain = document.querySelector('.app-main');
+        const readerContent = document.getElementById('readerContent');
+        if (!appMain || !readerContent) return;
 
-        reader.addEventListener('scroll', () => {
+        const scrollHandler = () => {
             if (!this.currentChapter) return;
-            const scrollPercent = (reader.scrollTop + reader.clientHeight) / content.scrollHeight;
+            const scrollPercent = (appMain.scrollTop + appMain.clientHeight) / readerContent.scrollHeight;
             const percent = Math.min(100, Math.round(scrollPercent * 100));
             this.updateChapterProgress(this.currentChapter.id, percent);
             this.updateProgressBar();
-        });
+        };
+
+        // Remover listener anterior si existe
+        appMain.removeEventListener('scroll', scrollHandler);
+        appMain.addEventListener('scroll', scrollHandler);
     },
 
     updateProgressBar() {
         if (!this.currentChapter) return;
         const progress = this.getChapterProgress(this.currentChapter.id);
-        document.getElementById('progressFill').style.width = progress.percent + '%';
-        document.getElementById('progressText').textContent = progress.percent + '%';
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        if (progressFill) progressFill.style.width = progress.percent + '%';
+        if (progressText) progressText.textContent = progress.percent + '%';
     },
 
     updateNavButtons() {
         const btnPrev = document.getElementById('btnPrev');
         const btnNext = document.getElementById('btnNext');
-        btnPrev.disabled = this.currentSection === 0;
-        // Simplified: no sections, just scroll
+        if (btnPrev) btnPrev.disabled = this.currentSection === 0;
     },
 
     prevSection() {
-        document.querySelector('.app-main').scrollBy({ top: -500, behavior: 'smooth' });
+        const appMain = document.querySelector('.app-main');
+        if (appMain) appMain.scrollBy({ top: -500, behavior: 'smooth' });
     },
 
     nextSection() {
-        document.querySelector('.app-main').scrollBy({ top: 500, behavior: 'smooth' });
+        const appMain = document.querySelector('.app-main');
+        if (appMain) appMain.scrollBy({ top: 500, behavior: 'smooth' });
     },
 
-    // ============================================
-    // AUDIO / TTS
-    // ============================================
     toggleAudio() {
         if (this.isPlaying) {
             this.stopAudio();
@@ -316,8 +299,8 @@ const app = {
             return;
         }
 
-        // Obtener texto limpio
         const content = document.getElementById('readerContent');
+        if (!content) return;
         const text = content.innerText;
 
         this.speech = new SpeechSynthesisUtterance(text);
@@ -333,7 +316,8 @@ const app = {
         window.speechSynthesis.speak(this.speech);
         this.isPlaying = true;
         this.updateAudioUI();
-        document.getElementById('audioPlayer').classList.remove('hidden');
+        const audioPlayer = document.getElementById('audioPlayer');
+        if (audioPlayer) audioPlayer.classList.remove('hidden');
     },
 
     stopAudio() {
@@ -348,9 +332,9 @@ const app = {
         const speeds = [0.8, 1, 1.2, 1.5, 2];
         const currentIndex = speeds.indexOf(this.audioSpeed);
         this.audioSpeed = speeds[(currentIndex + 1) % speeds.length];
-        document.getElementById('btnSpeed').textContent = this.audioSpeed + 'x';
+        const btnSpeed = document.getElementById('btnSpeed');
+        if (btnSpeed) btnSpeed.textContent = this.audioSpeed + 'x';
 
-        // Reiniciar con nueva velocidad
         if (this.isPlaying) {
             this.stopAudio();
             setTimeout(() => this.startAudio(), 100);
@@ -360,24 +344,29 @@ const app = {
     updateAudioUI() {
         const btn = document.getElementById('btnPlayPause');
         const player = document.getElementById('audioPlayer');
-        btn.textContent = this.isPlaying ? '⏸' : '▶';
-        if (!this.isPlaying) {
-            player.classList.add('paused');
-        } else {
-            player.classList.remove('paused');
+        if (btn) btn.textContent = this.isPlaying ? '⏸' : '▶';
+        if (player) {
+            if (!this.isPlaying) {
+                player.classList.add('paused');
+            } else {
+                player.classList.remove('paused');
+            }
         }
     },
 
-    // ============================================
-    // QUIZ
-    // ============================================
     showQuiz() {
         if (!this.currentChapter || !this.currentChapter.quiz) return;
 
-        document.getElementById('reader').classList.add('hidden');
-        document.getElementById('quizMode').classList.remove('hidden');
+        const reader = document.getElementById('reader');
+        const quizMode = document.getElementById('quizMode');
+        if (reader) reader.classList.add('hidden');
+        if (quizMode) {
+            quizMode.classList.remove('hidden');
+            quizMode.style.display = 'block';
+        }
 
         const container = document.getElementById('quizContent');
+        if (!container) return;
         container.innerHTML = '';
 
         let currentQuestion = 0;
@@ -386,7 +375,6 @@ const app = {
 
         const renderQuestion = () => {
             if (currentQuestion >= quiz.length) {
-                // Mostrar resultado
                 const percent = Math.round((score / quiz.length) * 100);
                 this.progress[this.currentChapter.id].quizScore = percent;
                 this.saveProgress();
@@ -438,14 +426,16 @@ const app = {
         renderQuestion();
     },
 
-    // ============================================
-    // VISUAL MODE
-    // ============================================
     showVisual() {
         if (!this.currentChapter || !this.currentChapter.visualScenes) return;
 
-        document.getElementById('reader').classList.add('hidden');
-        document.getElementById('visualMode').classList.remove('hidden');
+        const reader = document.getElementById('reader');
+        const visualMode = document.getElementById('visualMode');
+        if (reader) reader.classList.add('hidden');
+        if (visualMode) {
+            visualMode.classList.remove('hidden');
+            visualMode.style.display = 'block';
+        }
 
         this.currentVisualScene = 0;
         this.renderVisualScene();
@@ -458,27 +448,37 @@ const app = {
             return;
         }
 
-        document.getElementById('visualTitle').textContent = this.currentChapter.title;
-        document.getElementById('visualScene').innerHTML = `
-            <div class="visual-scene-placeholder">
-                <span class="scene-icon">🎬</span>
-                <span class="scene-desc">${scene.scene}</span>
-            </div>
-        `;
-        document.getElementById('visualDialogue').innerHTML = `
-            <div class="dialogue-speaker">${scene.dialogue.speaker}</div>
-            <div class="dialogue-text">${scene.dialogue.text}</div>
-        `;
-        document.getElementById('visualChoices').innerHTML = scene.choices.map((choice, i) => `
-            <button class="choice-btn" onclick="app.chooseVisual(${i})">${choice.text}</button>
-        `).join('');
+        const visualTitle = document.getElementById('visualTitle');
+        const visualScene = document.getElementById('visualScene');
+        const visualDialogue = document.getElementById('visualDialogue');
+        const visualChoices = document.getElementById('visualChoices');
+
+        if (visualTitle) visualTitle.textContent = this.currentChapter.title;
+        if (visualScene) {
+            visualScene.innerHTML = `
+                <div class="visual-scene-placeholder">
+                    <span class="scene-icon">🎬</span>
+                    <span class="scene-desc">${scene.scene}</span>
+                </div>
+            `;
+        }
+        if (visualDialogue) {
+            visualDialogue.innerHTML = `
+                <div class="dialogue-speaker">${scene.dialogue.speaker}</div>
+                <div class="dialogue-text">${scene.dialogue.text}</div>
+            `;
+        }
+        if (visualChoices) {
+            visualChoices.innerHTML = scene.choices.map((choice, i) => `
+                <button class="choice-btn" onclick="app.chooseVisual(${i})">${choice.text}</button>
+            `).join('');
+        }
     },
 
     chooseVisual(choiceIndex) {
         const scene = this.currentChapter.visualScenes[this.currentVisualScene];
         const next = scene.choices[choiceIndex].next;
 
-        // Marcar seleccionado
         const buttons = document.querySelectorAll('.choice-btn');
         buttons.forEach((btn, i) => {
             if (i === choiceIndex) btn.classList.add('selected');
@@ -490,44 +490,52 @@ const app = {
         }, 1000);
     },
 
-    // ============================================
-    // NAVEGACIÓN
-    // ============================================
-   showChapters() {
-    this.stopAudio();
-    this.currentChapter = null;
+    showChapters() {
+        this.stopAudio();
+        this.currentChapter = null;
 
-    // Ocultar todo
-    document.getElementById('reader').classList.add('hidden');
-    document.getElementById('reader').style.display = 'none';
-    document.getElementById('visualMode').classList.add('hidden');
-    document.getElementById('quizMode').classList.add('hidden');
-    document.getElementById('audioPlayer').classList.add('hidden');
+        const reader = document.getElementById('reader');
+        const visualMode = document.getElementById('visualMode');
+        const quizMode = document.getElementById('quizMode');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const selector = document.getElementById('chapterSelector');
 
-    // Mostrar selector
-    const selector = document.getElementById('chapterSelector');
-    selector.classList.remove('hidden');
-    selector.style.display = 'block';
+        if (reader) {
+            reader.classList.add('hidden');
+            reader.style.display = 'none';
+        }
+        if (visualMode) visualMode.classList.add('hidden');
+        if (quizMode) quizMode.classList.add('hidden');
+        if (audioPlayer) audioPlayer.classList.add('hidden');
+        if (selector) {
+            selector.classList.remove('hidden');
+            selector.style.display = 'block';
+        }
 
-    this.renderChapters();
-}
+        this.renderChapters();
+    },
 
     showReader() {
-    const reader = document.getElementById('reader');
-    reader.classList.remove('hidden');
-    reader.style.display = 'block';
+        const reader = document.getElementById('reader');
+        const quizMode = document.getElementById('quizMode');
+        const visualMode = document.getElementById('visualMode');
 
-    document.getElementById('quizMode').classList.add('hidden');
-    document.getElementById('visualMode').classList.add('hidden');
-}
+        if (reader) {
+            reader.classList.remove('hidden');
+            reader.style.display = 'block';
+        }
+        if (quizMode) quizMode.classList.add('hidden');
+        if (visualMode) visualMode.classList.add('hidden');
+    },
 
     toggleMenu() {
         const overlay = document.getElementById('menuOverlay');
-        overlay.classList.toggle('hidden');
+        if (overlay) overlay.classList.toggle('hidden');
     },
 
     showBookmarks() {
-        alert('Marcadores: ' + Object.keys(this.progress).filter(k => this.progress[k].percent > 0).join(', '));
+        const bookmarks = Object.keys(this.progress).filter(k => this.progress[k].percent > 0);
+        alert('Marcadores: ' + (bookmarks.length ? bookmarks.join(', ') : 'Ninguno aún'));
     },
 
     showSettings() {
