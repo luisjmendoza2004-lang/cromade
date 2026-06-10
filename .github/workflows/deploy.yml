@@ -1,0 +1,14 @@
+cromade/                          ← Tu repositorio
+├── .github/
+│   └── workflows/
+│       └── deploy.yml            ← CI/CD automático
+├── index.html                    ← App interactiva (lectura, audio, quiz, visuales)
+├── app.js                        ← Lógica de la app
+├── styles.css                    ← Estilos de la app
+├── data.js                       ← Contenido de los capítulos
+├── landing.html                  ← Página de ventas
+├── landing.css                   ← Estilos de la landing
+├── landing.js                    ← Lógica de la landing
+├── manifest.json                 ← PWA (instalable en celular)
+├── sw.js                         ← Service Worker (offline)
+└── README.md                     ← Guía de configuración
